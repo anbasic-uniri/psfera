@@ -17,7 +17,7 @@ import scipy
 plt.rcParams.update({'font.size': 14})
 
 parametri = 1
-primjer = 1
+primjer = 2
 pratim_te = 0 # brojac
 z_da_ne = 0 # 0 ili 1
 
@@ -95,6 +95,8 @@ for pi in range(np.size(povi)):
     p = povi[pi]
     
     indeksi = np.array(list(range(n+1)))
+    indeksi2 = np.array(list(range(n+1))).reshape(n+1, -1)
+
     
     # INTEGRACIJA
     deg = 20
@@ -195,10 +197,10 @@ for pi in range(np.size(povi)):
     def ro(x, t, q, q2, q3):
         n = np.size(q)
         p1 = 2 * r_0(x) * dr_0(x) * np.sum(q * np.sin(np.pi * indeksi[1:] * x)) + r_0(x)**2  * np.pi * np.sum(q * indeksi[1:] * np.cos(np.pi * indeksi[1:] * x))
-        p2 = 2 * dr_0(x) * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi[1:] * x) * transpose(np.sin(np.pi * indeksi[1:] * x))) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * (indeksi[1:] * np.cos(np.pi * indeksi[1:] * x)) * transpose(np.sin(np.pi * indeksi[1:] * x)) ) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi[1:] * x) * transpose(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x)) )
-        p3 = np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, 1, n)))
-        p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, 1, n)))
-        p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (1, 1, n)) * reshape(np.sin(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, n, 1)))
+        p2 = 2 * dr_0(x) * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi2[1:] * x) * transpose(np.sin(np.pi * indeksi2[1:] * x))) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * (indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x)) * transpose(np.sin(np.pi * indeksi2[1:] * x)) ) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi2[1:] * x) * transpose(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x)) )
+        p3 = np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, 1, n)))
+        p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, 1, n)))
+        p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (1, 1, n)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, n, 1)))
         return L * ro_0(x) / (L + ro_0(x) * (p1+p2+np.sum(p3)))
     def dv(x, t, v):
         return np.pi * np.sum(indeksi[1:] * v * np.cos(np.pi * x*indeksi[1:]))
@@ -209,11 +211,11 @@ for pi in range(np.size(povi)):
     def th(x, t, teta):
         return np.sum(teta * np.cos(np.pi * x * indeksi))
     def dth(x, t, teta):
-        return np.pi * np.sum(indeksi * teta * sin(np.pi*x*indeksi))
+        return -np.pi * np.sum(indeksi * teta * sin(np.pi*x*indeksi))
     def zz(x, t, z):
         return z_da_ne*np.sum(z * np.cos(np.pi*indeksi*x))
     def dz(x, t, z):
-        return z_da_ne*np.pi * np.sum(indeksi * z * sin(np.pi*x*indeksi))
+        return -z_da_ne*np.pi * np.sum(indeksi * z * sin(np.pi*x*indeksi))
     def lamb(k):
         if(k):
             return 2.
@@ -260,12 +262,11 @@ for pi in range(np.size(povi)):
         dvn = dv(x, t, v)
         wn = w(x, t, omega)
         dwn = dw(x, t, omega)
-        zn = zz(x, t, z)
         if(p>1.):
             ronp = np.power(ron, p)
         else:
             ronp = ron
-        return lamb(i)/c_v * ( (-kappa/L**2 * rn**4 * ron * dthn + 4/L * rn * (mi*vn**2 + c_d*wn**2)) * (np.pi * i * sin(np.pi * i * x)) + ( -R/L * ronp * thn * (2*rn*drn*vn + rn**2 * dvn) + (lam+2*mi)/L**2 * ron * (2*rn*drn*vn + rn**2 * dvn)**2 + 4*mi_r * wn**2 / ron + (c_0+2*c_d)/L**2 * ron * (2*rn*drn*wn + rn**2 * dwn)**2 + delta * fja_r(ron, thn, zn) ) * cos(np.pi * i * x) )
+        return lamb(i)/c_v * ( (-kappa/L**2 * rn**4 * ron * dthn + 4/L * rn * (mi*vn**2 + c_d*wn**2)) * (-np.pi * i * sin(np.pi * i * x)) + ( -R/L * ronp * thn * (2*rn*drn*vn + rn**2 * dvn) + (lam+2*mi)/L**2 * ron * (2*rn*drn*vn + rn**2 * dvn)**2 + 4*mi_r * wn**2 / ron + (c_0+2*c_d)/L**2 * ron * (2*rn*drn*wn + rn**2 * dwn)**2  ) * cos(np.pi * i * x) )
     def teta_jednadzba(t, i, v, omega, teta, z, q, q2, q3):
         zbroj = 0.
         for it in range (deg):
@@ -698,6 +699,6 @@ for pi in range(np.size(povi)):
     plt.colorbar()
     if(pi == np.size(povi)-1):
         plt.show()
-        fig.savefig('slike/sliketeta_povi_kont_pr' + str(primjer) + '.png')
+        fig.savefig('slike/teta_povi_kont_pr' + str(primjer) + '.png')
         
     

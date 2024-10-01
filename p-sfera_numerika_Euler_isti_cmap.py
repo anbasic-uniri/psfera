@@ -18,12 +18,12 @@ plt.rcParams.update({'font.size': 14})
 
 pratim_te = 0 # brojac
 z_da_ne = 0 # 0 ili 1
-primjer = 1
+primjer = 2
 parametri = 1
 
 p = 4
 n = 8
-T = 30
+T = 10
 
 if(parametri == 1):
     a = 1
@@ -99,6 +99,8 @@ elif(parametri == 3):
             return 0.
 
 indeksi = np.array(list(range(n+1)))
+indeksi2 = np.array(list(range(n+1))).reshape(n+1, -1)
+
 
 # INTEGRACIJA
 deg = 20
@@ -248,10 +250,10 @@ def dr(x, t, q):
 def ro(x, t, q, q2, q3):
     n = np.size(q)
     p1 = 2 * r_0(x) * dr_0(x) * np.sum(q * np.sin(np.pi * indeksi[1:] * x)) + r_0(x)**2  * np.pi * np.sum(q * indeksi[1:] * np.cos(np.pi * indeksi[1:] * x))
-    p2 = 2 * dr_0(x) * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi[1:] * x) * transpose(np.sin(np.pi * indeksi[1:] * x))) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * (indeksi[1:] * np.cos(np.pi * indeksi[1:] * x)) * transpose(np.sin(np.pi * indeksi[1:] * x)) ) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi[1:] * x) * transpose(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x)) )
-    p3 = np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, 1, n)))
-    p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, 1, n)))
-    p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi[1:] * np.cos(np.pi * indeksi[1:] * x), (1, 1, n)) * reshape(np.sin(np.pi * indeksi[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi[1:] * x), (1, n, 1)))
+    p2 = 2 * dr_0(x) * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi2[1:] * x) * transpose(np.sin(np.pi * indeksi2[1:] * x))) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * (indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x)) * transpose(np.sin(np.pi * indeksi2[1:] * x)) ) + 2 * r_0(x) * np.pi * np.sum( reshape(q2, (n, -1)) * np.sin(np.pi * indeksi2[1:] * x) * transpose(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x)) )
+    p3 = np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, 1, n)))
+    p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (1, n, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, 1, n)))
+    p3 += np.pi * reshape(q3, (n, n, -1)) * (reshape(indeksi2[1:] * np.cos(np.pi * indeksi2[1:] * x), (1, 1, n)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (n, 1, 1)) * reshape(np.sin(np.pi * indeksi2[1:] * x), (1, n, 1)))
     return L * ro_0(x) / (L + ro_0(x) * (p1+p2+np.sum(p3)))
 def dv(x, t, v):
     return np.pi * np.sum(indeksi[1:] * v * np.cos(np.pi * x*indeksi[1:]))
@@ -262,11 +264,11 @@ def dw(x, t, omega):
 def th(x, t, teta):
     return np.sum(teta * np.cos(np.pi * x * indeksi))
 def dth(x, t, teta):
-    return np.pi * np.sum(indeksi * teta * sin(np.pi*x*indeksi))
+    return -np.pi * np.sum(indeksi * teta * sin(np.pi*x*indeksi))
 def zz(x, t, z):
     return z_da_ne*np.sum(z * np.cos(np.pi*indeksi*x))
 def dz(x, t, z):
-    return z_da_ne*np.pi * np.sum(indeksi * z * sin(np.pi*x*indeksi))
+    return -z_da_ne*np.pi * np.sum(indeksi * z * sin(np.pi*x*indeksi))
 def lamb(k):
     if(k):
         return 2.
@@ -311,7 +313,7 @@ def teta_podintegralna(x, t, i, v, omega, teta, z, q, q2, q3):
     dwn = dw(x, t, omega)
     zn = zz(x, t, z)
     # - sin ili + sin u prvom dijelu u redu ispod?
-    return lamb(i)/c_v * ( (-kappa/L**2 * rn**4 * ron * dthn + 4/L * rn * (mi*vn**2 + c_d*wn**2)) * (np.pi * i * sin(np.pi * i * x)) + ( -R/L * ron**p * thn * (2*rn*drn*vn + rn**2 * dvn) + (lam+2*mi)/L**2 * ron * (2*rn*drn*vn + rn**2 * dvn)**2 + 4*mi_r * wn**2 / ron + (c_0+2*c_d)/L**2 * ron * (2*rn*drn*wn + rn**2 * dwn)**2 + delta * fja_r(ron, thn, zn) ) * cos(np.pi * i * x) )
+    return lamb(i)/c_v * ( (-kappa/L**2 * rn**4 * ron * dthn + 4/L * rn * (mi*vn**2 + c_d*wn**2)) * (-np.pi * i * sin(np.pi * i * x)) + ( -R/L * ron**p * thn * (2*rn*drn*vn + rn**2 * dvn) + (lam+2*mi)/L**2 * ron * (2*rn*drn*vn + rn**2 * dvn)**2 + 4*mi_r * wn**2 / ron + (c_0+2*c_d)/L**2 * ron * (2*rn*drn*wn + rn**2 * dwn)**2 ) * cos(np.pi * i * x) )
 def teta_jednadzba(t, i, v, omega, teta, z, q, q2, q3):
     zbroj = 0.
     for it in range (deg):
@@ -460,7 +462,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r'$\rho^n(\cdot, t)$')
 plt.show()
-fig.savefig('ro_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/ro_t_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -474,7 +476,7 @@ plt.ylabel('x')
 plt.title(r"$\rho$")
 plt.colorbar();
 plt.show()
-fig.savefig('ro_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/ro_k_pr' + str(primjer) + '.png')
 
 
 ## v --------------------------------------------------------------------------
@@ -501,7 +503,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r"$v^n(\cdot, t)$")
 plt.show()
-fig.savefig('v_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/v_t_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -516,7 +518,7 @@ plt.ylabel('x')
 plt.title(r"$v$")
 plt.colorbar();
 plt.show()
-fig.savefig('v_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/v_k_pr' + str(primjer) + '.png')
 
 ## omega ----------------------------------------------------------------------
 def omega_rj_f(x, t_ind):
@@ -542,7 +544,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r"$\omega^n(\cdot, t)$")
 plt.show()
-fig.savefig('omega_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/omega_t_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -557,7 +559,7 @@ plt.ylabel('x')
 plt.title(r"$\omega$")
 plt.colorbar();
 plt.show()
-fig.savefig('omega_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/omega_k_pr' + str(primjer) + '.png')
 
 ## teta -----------------------------------------------------------------------
 def teta_rj_f(x, t_ind):
@@ -582,7 +584,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r"$\theta^n(\cdot, t)$")
 plt.show()
-fig.savefig('teta_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/teta_t_pr' + str(primjer) + '.png')
 
 fig = plt.figure(figsize=(19, 15))
 ttplot = np.linspace(0, T, 100)
@@ -597,7 +599,7 @@ for i in range(np.size(xtplot)):
     plt.xlabel('t')
 plt.suptitle(r"$\theta^n(\cdot, t)$")
 plt.show()
-fig.savefig('teta_tt_pr' + str(primjer) + '.png')
+fig.savefig('slike/teta_tt_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -615,7 +617,7 @@ plt.ylabel('x')
 plt.title(r"$\theta$")
 plt.colorbar();
 plt.show()
-fig.savefig('teta_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/teta_k_pr' + str(primjer) + '.png')
 
 ## z -----------------------------------------------------------------------
 def z_rj_f(x, t_ind):
@@ -639,7 +641,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r"$z^n(\cdot, t)$")
 plt.show()
-fig.savefig('z_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/z_t_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -654,7 +656,7 @@ plt.ylabel('x')
 plt.title(r"$z$")
 plt.colorbar();
 plt.show()
-fig.savefig('z_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/z_k_pr' + str(primjer) + '.png')
 
 ## tlak ----------------------------------------------------------------------
 def interp_fja_ro(x, t):
@@ -690,7 +692,7 @@ plt.xlabel('t')
 plt.ylabel('x')
 # plt.title(r"$P$")
 cbar = plt.colorbar()
-fig.savefig('tlak_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/tlak_k_pr' + str(primjer) + '.png')
 print('plak', np.min(plak), np.max(plak))
 
 ## micajuće -------------------------------------------------------------------
@@ -748,7 +750,7 @@ plt.ylabel('x')
 plt.grid()
 plt.legend()
 plt.show()
-fig.savefig('pomak_pr' + str(primjer) + '.png')
+fig.savefig('slike/pomak_pr' + str(primjer) + '.png')
 
 
 ## r -------------------------------------------------------------------------
@@ -776,7 +778,7 @@ for i in range(nbla):
     plt.xlabel('x')
 plt.suptitle(r'$r^n(\cdot, t)$')
 plt.show()
-fig.savefig('r_t_pr' + str(primjer) + '.png')
+fig.savefig('slike/r_t_pr' + str(primjer) + '.png')
 
 xplot = np.linspace(0, 1)
 Z = np.zeros((np.size(xplot), np.size(t_rj)))
@@ -790,7 +792,7 @@ plt.ylabel('x')
 plt.title(r"$r$")
 plt.colorbar();
 plt.show()
-fig.savefig('r_k_pr' + str(primjer) + '.png')
+fig.savefig('slike/r_k_pr' + str(primjer) + '.png')
 
 # Euler
 # interp_r_rj_f(x, t)
@@ -821,12 +823,12 @@ fig = plt.figure(figsize=(19, 15))
 #plt.title.set_size(20)
 kovi = np.radians(np.linspace(0, 360))
 rovi = np.linspace(a, b, 50)
-r, k = np.meshgrid(rovi, kovi)
-Z = np.zeros(np.shape(r) + (nbla, ))
+rr, k = np.meshgrid(rovi, kovi)
+Z = np.zeros(np.shape(rr) + (nbla, ))
 for i in range(nbla):
     t = T*bla[i]
     for it in range(np.size(rovi)):
-        Z[0, it, i] = ro_kon(r[0, it], t)
+        Z[0, it, i] = ro_kon(rr[0, it], t)
         for it2 in range(np.size(kovi)):
             Z[it2, it, i] = Z[0, it, i]
 levels = np.linspace(np.amin(Z), np.amax(Z))
@@ -837,12 +839,12 @@ for i in range(nbla):
     plt.gca().set_xticks([])
     plt.gca().set_rlim([0, b])
     plt.gca().set_rticks([a, b])
-    plt.contourf(k, r, Z[:, :, i], levels)
+    plt.contourf(k, rr, Z[:, :, i], levels)
     plt.grid()
     plt.colorbar()
 plt.suptitle(r'$\rho_E(\cdot, t)$')
 plt.show()
-fig.savefig('ro_E_pr' + str(primjer) + '.png')
+fig.savefig('slike/ro_E_pr' + str(primjer) + '.png')
 
 # v
 fig = plt.figure(figsize=(19, 15))
@@ -850,21 +852,21 @@ for i in range(nbla):
     t = T*bla[i]
     plt.subplot(2, 2, i+1, polar=True)
     plt.gca().title.set_text("t = " + str(t))
-    r, k = np.meshgrid(rovi, kovi)
-    Z = np.zeros(np.shape(r))
+    rr, k = np.meshgrid(rovi, kovi)
+    Z = np.zeros(np.shape(rr))
     for it in range(np.size(rovi)):
-        Z[0, it] = v_kon(r[0, it], t)
+        Z[0, it] = v_kon(rr[0, it], t)
         for it2 in range(np.size(kovi)):
             Z[it2, it] = Z[0, it]
     plt.gca().set_xticks([])
     plt.gca().set_rlim([0, b])
     plt.gca().set_rticks([a, b])
-    plt.contourf(k, r, Z)
+    plt.contourf(k, rr, Z)
     plt.grid()
     plt.colorbar()
 plt.suptitle(r'$v_E(\cdot, t)$')
 plt.show()
-fig.savefig('v_E_pr' + str(primjer) + '.png')
+fig.savefig('slike/v_E_pr' + str(primjer) + '.png')
 
 
 # omega
@@ -873,21 +875,21 @@ for i in range(nbla):
     t = T*bla[i]
     plt.subplot(2, 2, i+1, polar=True)
     plt.gca().title.set_text("t = " + str(t))
-    r, k = np.meshgrid(rovi, kovi)
-    Z = np.zeros(np.shape(r))
+    rr, k = np.meshgrid(rovi, kovi)
+    Z = np.zeros(np.shape(rr))
     for it in range(np.size(rovi)):
-        Z[0, it] = omega_kon(r[0, it], t)
+        Z[0, it] = omega_kon(rr[0, it], t)
         for it2 in range(np.size(kovi)):
             Z[it2, it] = Z[0, it]
     plt.gca().set_xticks([])
     plt.gca().set_rlim([0, b])
     plt.gca().set_rticks([a, b])
-    plt.contourf(k, r, Z)
+    plt.contourf(k, rr, Z)
     plt.grid()
     plt.colorbar()
 plt.suptitle(r'$\omega_E(\cdot, t)$')
 plt.show()
-fig.savefig('omega_E_pr' + str(primjer) + '.png')
+fig.savefig('slike/omega_E_pr' + str(primjer) + '.png')
 
 
 # teta
@@ -895,12 +897,12 @@ fig = plt.figure(figsize=(19, 15))
 #plt.title.set_size(20)
 kovi = np.radians(np.linspace(0, 360))
 rovi = np.linspace(a, b, 50)
-r, k = np.meshgrid(rovi, kovi)
-Z = np.zeros(np.shape(r) + (nbla, ))
+rr, k = np.meshgrid(rovi, kovi)
+Z = np.zeros(np.shape(rr) + (nbla, ))
 for i in range(nbla):
     t = T*bla[i]
     for it in range(np.size(rovi)):
-        Z[0, it, i] = teta_kon(r[0, it], t)
+        Z[0, it, i] = teta_kon(rr[0, it], t)
         for it2 in range(np.size(kovi)):
             Z[it2, it, i] = Z[0, it, i]
 levels = np.linspace(np.amin(Z), np.amax(Z))
@@ -911,21 +913,21 @@ for i in range(nbla):
     plt.gca().set_xticks([])
     plt.gca().set_rlim([0, b])
     plt.gca().set_rticks([a, b])
-    plt.contourf(k, r, Z[:, :, i], levels)
+    plt.contourf(k, rr, Z[:, :, i], levels)
     plt.grid()
     plt.colorbar()
 plt.suptitle(r'$\theta_E(\cdot, t)$')
 plt.show()
-fig.savefig('teta_E_pr' + str(primjer) + '.png')
+fig.savefig('slike/teta_E_pr' + str(primjer) + '.png')
 
 # micajuće
 koliko = 5
 tplot = np.linspace(0, T, koliko)
-Z = np.zeros(np.shape(r) + (koliko,))
+Z = np.zeros(np.shape(rr) + (koliko,))
 for i in range(koliko):
     t = tplot[i]
     for it in range(np.size(rovi)):
-        Z[0, it, i] = teta_kon(r[0, it], t)
+        Z[0, it, i] = teta_kon(rr[0, it], t)
         for it2 in range(np.size(kovi)):
             Z[it2, it, i] = Z[0, it, i]
 levels = np.linspace(np.amin(Z), np.amax(Z))
@@ -935,7 +937,7 @@ t = tplot[0]
 plt.gca().set_xticks([])
 plt.gca().set_ylim([0, b])
 plt.gca().set_yticks([a, b])
-plt.contourf(k, r, Z[:, :, i], levels,  cmap=plt.cm.bone)
+plt.contourf(k, rr, Z[:, :, i], levels,  cmap=plt.cm.bone)
 plt.grid()
 plt.colorbar()
 plt.show()
@@ -947,7 +949,7 @@ for i in range(koliko):
     plt.gca().set_xticks([])
     plt.gca().set_ylim([0, b])
     plt.gca().set_yticks([a, b])
-    plt.contourf(k, r, Z[:, :, i], levels, cmap=plt.cm.bone)
+    plt.contourf(k, rr, Z[:, :, i], levels, cmap=plt.cm.bone)
     plt.grid()
     plt.show()
     plt.pause(0.01)
