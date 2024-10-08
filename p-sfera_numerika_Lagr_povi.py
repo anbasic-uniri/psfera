@@ -14,10 +14,18 @@ import time
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp2d
 import scipy
-plt.rcParams.update({'font.size': 14})
+
+import matplotlib.ticker as ticker
+def fmt(x, pos):
+    a, b = '{:.2e}'.format(x).split('e')
+    b = int(b)
+    return r'${} \times 10^{{{}}}$'.format(a, b)
+
+
+plt.rcParams.update({'font.size': 20})
 
 parametri = 1
-primjer = 2
+primjer = 1
 pratim_te = 0 # brojac
 z_da_ne = 0 # 0 ili 1
 
@@ -533,6 +541,7 @@ for pi in range(np.size(povi)):
     
     # ro graf
     fig = plt.figure(1, figsize=(19, 15))
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
     fig.suptitle(r'$\rho(\cdot, t)$')
     rovi = np.linspace(0,1, rovi_size)
     for i in range(nbla):
@@ -542,7 +551,8 @@ for pi in range(np.size(povi)):
         Z = np.zeros(np.shape(rovi))
         for it in range(np.size(rovi)):
             Z[it] = interp_ro_rj_f(rovi[it], t)
-        plt.plot(rovi, Z, label = 'p = '+str(p), color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.plot(rovi, Z, label = r"$p = "+str(p)+r"$", color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
         plt.gca().legend()
         plt.gca().grid(True)
     if(pi == np.size(povi)-1):
@@ -557,6 +567,7 @@ for pi in range(np.size(povi)):
         
     # v graf
     fig = plt.figure(2, figsize=(19, 15))
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
     fig.suptitle(r'$v(\cdot, t)$')
     rovi = np.linspace(0,1, rovi_size)
     for i in range(nbla):
@@ -566,7 +577,8 @@ for pi in range(np.size(povi)):
         Z = np.zeros(np.shape(rovi))
         for it in range(np.size(rovi)):
             Z[it] = interp_v_rj_f(rovi[it], t)
-        plt.plot(rovi, Z, label = 'p = '+str(p), color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.plot(rovi, Z, label = r'$p = '+str(p)+r'$', color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
         plt.gca().legend()
         plt.gca().grid(True)
     if(pi == np.size(povi)-1):
@@ -581,6 +593,7 @@ for pi in range(np.size(povi)):
 
     # omega graf
     fig = plt.figure(3, figsize=(19, 15))
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
     fig.suptitle(r'$\omega(\cdot, t)$')
     rovi = np.linspace(0,1, rovi_size)
     for i in range(nbla):
@@ -590,7 +603,8 @@ for pi in range(np.size(povi)):
         Z = np.zeros(np.shape(rovi))
         for it in range(np.size(rovi)):
             Z[it] = interp_omega_rj_f(rovi[it], t)
-        plt.plot(rovi, Z, label = 'p = '+str(p), color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.plot(rovi, Z, label = r"$p = "+str(p)+r"$", color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
         plt.gca().legend()
         plt.gca().grid(True)
     if(pi == np.size(povi)-1):
@@ -605,6 +619,7 @@ for pi in range(np.size(povi)):
         
     # teta graf
     fig = plt.figure(4, figsize=(19, 15))
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
     fig.suptitle(r'$\theta(\cdot, t)$')
     rovi = np.linspace(0,1, rovi_size)
     for i in range(nbla):
@@ -614,7 +629,8 @@ for pi in range(np.size(povi)):
         Z = np.zeros(np.shape(rovi))
         for it in range(np.size(rovi)):
             Z[it] = interp_teta_rj_f(rovi[it], t)
-        plt.plot(rovi, Z, label = 'p = '+str(p), color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.plot(rovi, Z, label = r"$p = "+str(p)+r"$", color = boje[pi], linestyle = crte[pi], marker = markeri[pi])
+        plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0), useMathText=True)
         plt.gca().legend()
         plt.gca().grid(True)
     if(pi == np.size(povi)-1):
@@ -629,76 +645,76 @@ for pi in range(np.size(povi)):
     print(p, 'time =', time.time() - start)
         
  
-plt.rcParams.update({'font.size': 12})
-for pi in range(np.size(povi)):
-    p = povi[pi] 
-    # ro
-    rovi = np.linspace(0,1, rovi_size)
-    tplot = np.linspace(0, scale_r*T, tplot_size)
-    rovi, tplot = np.meshgrid(rovi, tplot)
-    levels = np.linspace(np.amin(Zr[:, :, pi]), np.amax(Zr[:, :, pi]), 500)
-    fig = plt.figure(5, figsize=(19, 15))
-    fig.suptitle(r'$\rho$')
-    plt.subplot(2, 2, pi+1)
-    plt.gca().title.set_text("p = " + str(p))
-    plt.contourf(tplot, rovi, Zr[:, :, pi], levels,  cmap='viridis')
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.colorbar()
-    if(pi == np.size(povi)-1):
-        plt.show()
-        fig.savefig('slike/ro_povi_kont_pr' + str(primjer) + '.png')
+# plt.rcParams.update({'font.size': 12})
+# for pi in range(np.size(povi)):
+#     p = povi[pi] 
+#     # ro
+#     rovi = np.linspace(0,1, rovi_size)
+#     tplot = np.linspace(0, scale_r*T, tplot_size)
+#     rovi, tplot = np.meshgrid(rovi, tplot)
+#     levels = np.linspace(np.amin(Zr[:, :, pi]), np.amax(Zr[:, :, pi]), 500)
+#     fig = plt.figure(5, figsize=(19, 15))
+#     fig.suptitle(r'$\rho$')
+#     plt.subplot(2, 2, pi+1)
+#     plt.gca().title.set_text(r"$p = " + str(p) + r"$")
+#     plt.contourf(tplot, rovi, Zr[:, :, pi], levels,  cmap='viridis')
+#     plt.xlabel('t')
+#     plt.ylabel('x')
+#     plt.colorbar(format=ticker.FuncFormatter(fmt))
+#     if(pi == np.size(povi)-1):
+#         plt.show()
+#         fig.savefig('slike/ro_povi_kont_pr' + str(primjer) + '.png')
         
-    # v
-    rovi = np.linspace(0,1, rovi_size)
-    tplot = np.linspace(0, scale_v*T, tplot_size)
-    rovi, tplot = np.meshgrid(rovi, tplot)
-    levels = np.linspace(np.amin(Zv[:, :, pi]), np.amax(Zv[:, :, pi]), 500)
-    fig = plt.figure(6, figsize=(19, 15))
-    fig.suptitle(r'$v$')
-    plt.subplot(2, 2, pi+1)
-    plt.gca().title.set_text("p = " + str(p))
-    plt.contourf(tplot, rovi, Zv[:, :, pi], levels,  cmap='viridis')
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.colorbar()
-    if(pi == np.size(povi)-1):
-        plt.show()
-        fig.savefig('slike/v_povi_kont_pr' + str(primjer) + '.png')
+#     # v
+#     rovi = np.linspace(0,1, rovi_size)
+#     tplot = np.linspace(0, scale_v*T, tplot_size)
+#     rovi, tplot = np.meshgrid(rovi, tplot)
+#     levels = np.linspace(np.amin(Zv[:, :, pi]), np.amax(Zv[:, :, pi]), 500)
+#     fig = plt.figure(6, figsize=(19, 15))
+#     fig.suptitle(r'$v$')
+#     plt.subplot(2, 2, pi+1)
+#     plt.gca().title.set_text(r"$p = " + str(p) + r"$")
+#     plt.contourf(tplot, rovi, Zv[:, :, pi], levels,  cmap='viridis')
+#     plt.xlabel('t')
+#     plt.ylabel('x')
+#     plt.colorbar(format=ticker.FuncFormatter(fmt))
+#     if(pi == np.size(povi)-1):
+#         plt.show()
+#         fig.savefig('slike/v_povi_kont_pr' + str(primjer) + '.png')
         
-    # omega
-    rovi = np.linspace(0,1, rovi_size)
-    tplot = np.linspace(0, scale_o*T, tplot_size)
-    rovi, tplot = np.meshgrid(rovi, tplot)
-    levels = np.linspace(np.amin(Zo[:, :, pi]), np.amax(Zo[:, :, pi]), 500)
-    fig = plt.figure(7, figsize=(19, 15))
-    fig.suptitle(r'$\omega$')
-    plt.subplot(2, 2, pi+1)
-    plt.gca().title.set_text("p = " + str(p))
-    plt.contourf(tplot, rovi, Zo[:, :, pi], levels,  cmap='viridis')
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.colorbar()
-    if(pi == np.size(povi)-1):
-        plt.show()
-        fig.savefig('slike/omega_povi_kont_pr' + str(primjer) + '.png')
+#     # omega
+#     rovi = np.linspace(0,1, rovi_size)
+#     tplot = np.linspace(0, scale_o*T, tplot_size)
+#     rovi, tplot = np.meshgrid(rovi, tplot)
+#     levels = np.linspace(np.amin(Zo[:, :, pi]), np.amax(Zo[:, :, pi]), 500)
+#     fig = plt.figure(7, figsize=(19, 15))
+#     fig.suptitle(r'$\omega$')
+#     plt.subplot(2, 2, pi+1)
+#     plt.gca().title.set_text(r"$p = " + str(p) + r"$")
+#     plt.contourf(tplot, rovi, Zo[:, :, pi], levels,  cmap='viridis')
+#     plt.xlabel('t')
+#     plt.ylabel('x')
+#     plt.colorbar(format=ticker.FuncFormatter(fmt))
+#     if(pi == np.size(povi)-1):
+#         plt.show()
+#         fig.savefig('slike/omega_povi_kont_pr' + str(primjer) + '.png')
         
         
-    # teta
-    rovi = np.linspace(0,1, rovi_size)
-    tplot = np.linspace(0, scale_t*T, tplot_size)
-    rovi, tplot = np.meshgrid(rovi, tplot)
-    levels = np.linspace(np.amin(Zt[:, :, pi]), np.amax(Zt[:, :, pi]), 500)
-    fig = plt.figure(8, figsize=(19, 15))
-    fig.suptitle(r'$\theta$')
-    plt.subplot(2, 2, pi+1)
-    plt.gca().title.set_text("p = " + str(p))
-    plt.contourf(tplot, rovi, Zt[:, :, pi], levels,  cmap='viridis')
-    plt.xlabel('t')
-    plt.ylabel('x')
-    plt.colorbar()
-    if(pi == np.size(povi)-1):
-        plt.show()
-        fig.savefig('slike/teta_povi_kont_pr' + str(primjer) + '.png')
+#     # teta
+#     rovi = np.linspace(0,1, rovi_size)
+#     tplot = np.linspace(0, scale_t*T, tplot_size)
+#     rovi, tplot = np.meshgrid(rovi, tplot)
+#     levels = np.linspace(np.amin(Zt[:, :, pi]), np.amax(Zt[:, :, pi]), 500)
+#     fig = plt.figure(8, figsize=(19, 15))
+#     fig.suptitle(r'$\theta$')
+#     plt.subplot(2, 2, pi+1)
+#     plt.gca().title.set_text(r"$p = " + str(p) + r"$")
+#     plt.contourf(tplot, rovi, Zt[:, :, pi], levels,  cmap='viridis')
+#     plt.xlabel('t')
+#     plt.ylabel('x')
+#     plt.colorbar(format=ticker.FuncFormatter(fmt))
+#     if(pi == np.size(povi)-1):
+#         plt.show()
+#         fig.savefig('slike/teta_povi_kont_pr' + str(primjer) + '.png')
         
     

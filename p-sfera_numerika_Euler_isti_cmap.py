@@ -14,7 +14,14 @@ import time
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp2d
 import scipy
-plt.rcParams.update({'font.size': 14})
+
+import matplotlib.ticker as ticker
+def fmt(x, pos):
+    a, b = '{:.2e}'.format(x).split('e')
+    b = int(b)
+    return r'${} \times 10^{{{}}}$'.format(a, b)
+
+plt.rcParams.update({'font.size': 20})
 
 pratim_te = 0 # brojac
 z_da_ne = 0 # 0 ili 1
@@ -456,7 +463,7 @@ fig = plt.figure(figsize=(19, 15))
 xplot = np.linspace(0,1, 200)
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_ro_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_ro_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -474,7 +481,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='viridis')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$\rho$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/ro_k_pr' + str(primjer) + '.png')
 
@@ -497,7 +504,7 @@ fig = plt.figure(figsize=(19, 15))
 xplot = np.linspace(0,1, 200)
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_v_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_v_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -516,7 +523,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='PiYG')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$v$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/v_k_pr' + str(primjer) + '.png')
 
@@ -538,7 +545,7 @@ fig = plt.figure(figsize=(19, 15))
 xplot = np.linspace(0,1, 200)
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_omega_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_omega_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -557,7 +564,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='plasma')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$\omega$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/omega_k_pr' + str(primjer) + '.png')
 
@@ -578,7 +585,7 @@ fig = plt.figure(figsize=(19, 15))
 # plt.title.set_size(20)
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_teta_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_teta_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -593,7 +600,7 @@ xtplot[-2] = 0.9795918367346939
 # plt.title.set_size(20)
 for i in range(np.size(xtplot)):
     plt.subplot(3, 3, i+1)
-    plt.plot(ttplot, interp_teta_rj_f(xtplot[i], ttplot), 'k--', label = "x = " + str(xtplot[i]))
+    plt.plot(ttplot, interp_teta_rj_f(xtplot[i], ttplot), 'k--', label = r"$x = " + str(xtplot[i]) + "$")
     plt.legend()
     plt.grid()
     plt.xlabel('t')
@@ -615,7 +622,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='spring')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$\theta$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/teta_k_pr' + str(primjer) + '.png')
 
@@ -635,7 +642,7 @@ def interp_z_rj_f(x, t):
 fig = plt.figure(figsize=(19, 15))
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_z_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_z_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -654,7 +661,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='cool')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$z$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/z_k_pr' + str(primjer) + '.png')
 
@@ -691,7 +698,7 @@ plt.contourf(tplot, xplot, plak, 500, cmap = 'hot')
 plt.xlabel('t')
 plt.ylabel('x')
 # plt.title(r"$P$")
-cbar = plt.colorbar()
+cbar = plt.colorbar(format=ticker.FuncFormatter(fmt))
 fig.savefig('slike/tlak_k_pr' + str(primjer) + '.png')
 print('plak', np.min(plak), np.max(plak))
 
@@ -772,7 +779,7 @@ fig = plt.figure(figsize=(19, 15))
 xplot = np.linspace(0,1, 200)
 for i in range(nbla):
     plt.subplot(2, 2, i+1)
-    plt.plot(xplot, interp_r_rj_f(xplot, T*bla[i]), 'k--', label = "t = " + str(T*bla[i]))
+    plt.plot(xplot, interp_r_rj_f(xplot, T*bla[i]), 'k--', label = r"$t = " + str(T*bla[i]) + r"$")
     plt.legend()
     plt.grid()
     plt.xlabel('x')
@@ -790,7 +797,7 @@ plt.contourf(t_rj, xplot, Z, 500,  cmap='viridis')
 plt.xlabel('t')
 plt.ylabel('x')
 plt.title(r"$r$")
-plt.colorbar();
+plt.colorbar(format=ticker.FuncFormatter(fmt));
 plt.show()
 fig.savefig('slike/r_k_pr' + str(primjer) + '.png')
 
@@ -841,7 +848,7 @@ for i in range(nbla):
     plt.gca().set_rticks([a, b])
     plt.contourf(k, rr, Z[:, :, i], levels)
     plt.grid()
-    plt.colorbar()
+    plt.colorbar(format=ticker.FuncFormatter(fmt))
 plt.suptitle(r'$\rho_E(\cdot, t)$')
 plt.show()
 fig.savefig('slike/ro_E_pr' + str(primjer) + '.png')
@@ -863,7 +870,7 @@ for i in range(nbla):
     plt.gca().set_rticks([a, b])
     plt.contourf(k, rr, Z)
     plt.grid()
-    plt.colorbar()
+    plt.colorbar(format=ticker.FuncFormatter(fmt))
 plt.suptitle(r'$v_E(\cdot, t)$')
 plt.show()
 fig.savefig('slike/v_E_pr' + str(primjer) + '.png')
@@ -886,7 +893,7 @@ for i in range(nbla):
     plt.gca().set_rticks([a, b])
     plt.contourf(k, rr, Z)
     plt.grid()
-    plt.colorbar()
+    plt.colorbar(format=ticker.FuncFormatter(fmt))
 plt.suptitle(r'$\omega_E(\cdot, t)$')
 plt.show()
 fig.savefig('slike/omega_E_pr' + str(primjer) + '.png')
@@ -915,7 +922,7 @@ for i in range(nbla):
     plt.gca().set_rticks([a, b])
     plt.contourf(k, rr, Z[:, :, i], levels)
     plt.grid()
-    plt.colorbar()
+    plt.colorbar(format=ticker.FuncFormatter(fmt))
 plt.suptitle(r'$\theta_E(\cdot, t)$')
 plt.show()
 fig.savefig('slike/teta_E_pr' + str(primjer) + '.png')
@@ -939,7 +946,7 @@ plt.gca().set_ylim([0, b])
 plt.gca().set_yticks([a, b])
 plt.contourf(k, rr, Z[:, :, i], levels,  cmap=plt.cm.bone)
 plt.grid()
-plt.colorbar()
+plt.colorbar(format=ticker.FuncFormatter(fmt))
 plt.show()
 plt.pause(0.01)
 for i in range(koliko):
